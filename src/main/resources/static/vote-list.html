@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>투표 목록</title>
+    <style>
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid #999;
+            padding: 8px;
+        }
+    </style>
+</head>
+<body>
+<h2>투표 목록</h2>
+<table id="voteTable">
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>제목</th>
+        <th>설명</th>
+        <th>마감일</th>
+        <th>마감 여부</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- 여기에 JS로 투표 리스트 삽입 -->
+    </tbody>
+</table>
+
+<script>
+    const accessToken = localStorage.getItem("accessToken"); // 로그인 시 저장된 토큰 사용
+
+    fetch("http://localhost:8080/api/votes", {
+        method: "GET",
+        headers: {
+            "Authorization": "Bearer " + accessToken
+        }
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("투표 목록 가져오기 실패");
+            }
+            return response.json();
+        })
+        .then(data => {
+            const tbody = document.querySelector("#voteTable tbody");
+            data.forEach(vote => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${vote.id}</td>
+                    <td><a href="vote-detail.html?id=${vote.id}">${vote.title}</a></td>
+                    <td>${vote.description}</td>
+                    <td>${vote.deadline.replace("T", " ").substring(0, 16)}</td>
+                    <td>${vote.closed ? "마감됨" : "진행 중"}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        })
+        .catch(error => {
+            console.error("오류:", error);
+            alert("투표 목록을 불러오지 못했습니다.");
+        });
+
+
+</script>
+<button onclick="location.href='create-vote.html'"> 새 투표 생성</button>
+
+</body>
+</html>

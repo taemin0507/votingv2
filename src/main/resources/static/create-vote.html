@@ -1,0 +1,64 @@
+<!-- create-vote.html -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <title>투표 생성</title>
+</head>
+<body>
+<h2>투표 생성</h2>
+
+<form id="vote-form">
+    <input type="text" id="title" placeholder="투표 제목" required /><br /><br />
+    <textarea id="description" placeholder="투표 설명"></textarea><br /><br />
+    <label>마감 기한:</label>
+    <input type="datetime-local" id="deadline" required /><br /><br />
+    <button type="submit">투표 생성</button>
+</form>
+
+<div id="result"></div>
+
+<script>
+    // 로그인 시 저장한 토큰 불러오기
+    const token = localStorage.getItem("accessToken");
+
+    document.getElementById("vote-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+
+        const title = document.getElementById("title").value;
+        const description = document.getElementById("description").value;
+        const deadline = document.getElementById("deadline").value;
+
+        if (!token) {
+            document.getElementById('result').innerText = '⚠️ 로그인 정보가 없습니다. 다시 로그인 해주세요.';
+            return;
+        }
+
+        try {
+            const response = await fetch("http://localhost:8080/api/votes", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    title,
+                    description,
+                    deadline
+                })
+            });
+
+            if (response.ok) {
+                alert('✅ 투표가 성공적으로 생성되었습니다!');
+                window.location.href = 'vote-list.html';  // 🎯 생성 성공 후 목록 페이지로 이동
+            } else {
+                alert('❌ 투표 생성 실패');
+            }
+        } catch (error) {
+            console.error('투표 생성 중 오류:', error);
+            alert('⚠️ 네트워크 오류');
+        }
+    });
+</script>
+</body>
+</html>

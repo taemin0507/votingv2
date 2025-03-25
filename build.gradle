@@ -1,0 +1,48 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.4.4'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+dependencies {
+    // 웹 애플리케이션 개발 기본 구성
+    implementation 'org.springframework.boot:spring-boot-starter-web'           // Spring MVC
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'      // JPA
+    implementation 'org.springframework.boot:spring-boot-starter-security'      // Spring Security
+    implementation 'org.springframework.boot:spring-boot-starter-validation'    // @Valid 등 유효성 검사
+
+    // JWT (토큰 인증)
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'                             // JWT API
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'                               // 구현체
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'                            // JSON 변환 (jackson 기반)
+
+    // 롬복 (Getter, Setter, Builder 등 자동 생성)
+    compileOnly 'org.projectlombok:lombok'                                      // 롬복 어노테이션
+    annotationProcessor 'org.projectlombok:lombok'                              // 롬복 처리기
+
+    // 테스트 라이브러리
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    runtimeOnly 'com.mysql:mysql-connector-j'// JUnit 등 포함
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}
+repositories {
+    mavenCentral()
+}
