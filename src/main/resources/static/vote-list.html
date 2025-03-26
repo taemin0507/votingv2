@@ -12,6 +12,11 @@
             border: 1px solid #999;
             padding: 8px;
         }
+        .action-btn {
+            margin-left: 10px;
+            cursor: pointer;
+            color: red;
+        }
     </style>
 </head>
 <body>
@@ -24,50 +29,83 @@
         <th>설명</th>
         <th>마감일</th>
         <th>마감 여부</th>
+        <th>관리</th>
     </tr>
     </thead>
     <tbody>
-    <!-- 여기에 JS로 투표 리스트 삽입 -->
+    <!-- JS로 투표 리스트 삽입 -->
     </tbody>
 </table>
 
 <script>
-    const accessToken = localStorage.getItem("accessToken"); // 로그인 시 저장된 토큰 사용
+    const accessToken = localStorage.getItem("accessToken");
 
-    fetch("http://localhost:8080/api/votes", {
-        method: "GET",
-        headers: {
-            "Authorization": "Bearer " + accessToken
-        }
-    })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error("투표 목록 가져오기 실패");
+    function loadVotes() {
+        fetch("http://localhost:8080/api/votes", {
+            method: "GET",
+            headers: {
+                "Authorization": "Bearer " + accessToken
             }
-            return response.json();
         })
-        .then(data => {
-            const tbody = document.querySelector("#voteTable tbody");
-            data.forEach(vote => {
-                const row = document.createElement("tr");
-                row.innerHTML = `
-                    <td>${vote.id}</td>
-                    <td><a href="vote-detail.html?id=${vote.id}">${vote.title}</a></td>
-                    <td>${vote.description}</td>
-                    <td>${vote.deadline.replace("T", " ").substring(0, 16)}</td>
-                    <td>${vote.closed ? "마감됨" : "진행 중"}</td>
-                `;
-                tbody.appendChild(row);
+            .then(response => {
+                if (!response.ok) throw new Error("투표 목록 가져오기 실패");
+                return response.json();
+            })
+            .then(data => {
+                const tbody = document.querySelector("#voteTable tbody");
+                tbody.innerHTML = ""; // 기존 목록 비우기
+
+                data.forEach(vote => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${vote.id}</td>
+                        <td><a href="vote-detail.html?id=${vote.id}">${vote.title}</a></td>
+                        <td>${vote.description}</td>
+                        <td>${vote.deadline.replace("T", " ").substring(0, 16)}</td>
+                        <td>${vote.closed ? "마감됨" : "진행 중"}</td>
+                        <td>
+                            <button class="action-btn" onclick="location.href='vote-result.html?id=${vote.id}'">결과 보기</button>
+                            <button class="action-btn" onclick="deleteVote(${vote.id})">삭제</button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            })
+            .catch(error => {
+                console.error("오류:", error);
+                alert("투표 목록을 불러오지 못했습니다.");
             });
+    }
+
+    // ✅ 삭제 처리
+    function deleteVote(voteId) {
+        if (!confirm("이 투표를 삭제하시겠습니까?")) return;
+
+        fetch(`http://localhost:8080/api/votes/${voteId}`, {
+            method: "DELETE",
+            headers: {
+                "Authorization": "Bearer " + accessToken
+            }
         })
-        .catch(error => {
-            console.error("오류:", error);
-            alert("투표 목록을 불러오지 못했습니다.");
-        });
+            .then(response => {
+                if (response.ok) {
+                    alert("삭제 완료!");
+                    loadVotes(); // 새로고침
+                } else {
+                    alert("삭제 실패");
+                }
+            })
+            .catch(error => {
+                console.error("삭제 오류:", error);
+                alert("⚠️ 서버 오류 발생");
+            });
+    }
 
-
+    // 초기 로딩
+    loadVotes();
 </script>
-<button onclick="location.href='create-vote.html'"> 새 투표 생성</button>
+
+<button onclick="location.href='create-vote.html'">+ 새 투표 생성</button>
 
 </body>
 </html>

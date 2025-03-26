@@ -5,11 +5,13 @@
     <title>투표 상세 보기</title>
     <style>
         body { font-family: Arial, sans-serif; padding: 20px; }
-        .label { font-weight: bold; margin-top: 10px; }
+        .label { font-weight: bold; margin-top: 10px; display: inline-block; width: 100px; }
     </style>
 </head>
 <body>
 <h2>투표 상세</h2>
+
+<!-- ✅ 투표 기본 정보 출력 -->
 <div>
     <div><span class="label">ID:</span> <span id="vote-id"></span></div>
     <div><span class="label">제목:</span> <span id="vote-title"></span></div>
@@ -18,27 +20,33 @@
     <div><span class="label">마감 여부:</span> <span id="vote-closed"></span></div>
 </div>
 
-<button onclick="window.location.href='vote-list.html'">목록으로</button>
+<!-- ✅ 항목 선택 영역 -->
+<h3>항목 선택</h3>
+<form id="vote-form">
+    <div id="vote-items"></div>
+    <br>
+    <button type="submit">투표하기</button>
+</form>
+
+<br><br>
+<!-- ✅ 목록으로 이동 버튼 -->
+<button onclick="window.location.href='vote-list.html'">← 목록으로</button>
 
 <script>
-    // URL에서 id 파라미터 추출
     const params = new URLSearchParams(window.location.search);
     const voteId = params.get("id");
     const token = localStorage.getItem("accessToken");
 
+    // ✅ 상세정보 조회 및 표시
     if (!voteId) {
-        alert("잘못된 접근입니다. (ID 없음)");
+        alert("잘못된 접근입니다. (투표 ID 없음)");
     } else {
         fetch(`http://localhost:8080/api/votes/${voteId}`, {
             method: "GET",
-            headers: {
-                "Authorization": "Bearer " + token
-            }
+            headers: { "Authorization": "Bearer " + token }
         })
             .then(response => {
-                if (!response.ok) {
-                    throw new Error("투표 상세 정보 조회 실패");
-                }
+                if (!response.ok) throw new Error("투표 상세 정보 조회 실패");
                 return response.json();
             })
             .then(vote => {
@@ -47,12 +55,55 @@
                 document.getElementById("vote-description").innerText = vote.description;
                 document.getElementById("vote-deadline").innerText = vote.deadline.replace("T", " ").substring(0, 16);
                 document.getElementById("vote-closed").innerText = vote.closed ? "마감됨" : "진행 중";
+
+                const container = document.getElementById("vote-items");
+                vote.items.forEach(item => {
+                    const div = document.createElement("div");
+                    div.innerHTML = `
+                    <label>
+                        <input type="radio" name="selectedItemId" value="${item.itemId}" required />
+                        ${item.itemText} - ${item.itemDescription || "설명 없음"}
+                    </label>
+                `;
+                    container.appendChild(div);
+                });
             })
             .catch(error => {
                 console.error(error);
-                alert("투표 정보를 불러오지 못했습니다.");
+                alert("❌ 투표 정보를 불러오지 못했습니다.");
             });
     }
+
+    // ✅ 투표 제출 요청
+    document.getElementById("vote-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const selected = document.querySelector('input[name="selectedItemId"]:checked');
+        if (!selected) {
+            alert("⚠️ 항목을 선택해주세요.");
+            return;
+        }
+
+        try {
+            const response = await fetch(`http://localhost:8080/api/votes/${voteId}/vote`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`
+                },
+                body: JSON.stringify({ selectedItemId: selected.value })  // ✅ 필드명 주의!
+            });
+
+            if (response.ok) {
+                alert("✅ 투표가 완료되었습니다!");
+                window.location.href = 'vote-list.html';
+            } else {
+                alert("❌ 투표 실패");
+            }
+        } catch (error) {
+            console.error("투표 중 오류:", error);
+            alert("⚠️ 네트워크 오류");
+        }
+    });
 </script>
 </body>
 </html>

@@ -1,10 +1,10 @@
-// VoteResponse.java
 package com.example.votingv2.dto;
 
 import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Builder
@@ -15,4 +15,15 @@ public class VoteResponse {
     private LocalDateTime deadline;
     private boolean isClosed;
     private LocalDateTime createdAt;
+
+    // ✅ 투표 항목 정보를 담는 내부 클래스 리스트
+    private List<Item> items;
+
+    @Getter
+    @Builder
+    public static class Item {
+        private Long itemId;
+        private String itemText;
+        private String itemDescription;
+    }
 }

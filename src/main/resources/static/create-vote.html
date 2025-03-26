@@ -13,12 +13,33 @@
     <textarea id="description" placeholder="투표 설명"></textarea><br /><br />
     <label>마감 기한:</label>
     <input type="datetime-local" id="deadline" required /><br /><br />
+
+    <h3>항목 추가</h3>
+    <div id="items-container">
+        <!-- 항목 입력창들이 들어올 영역 -->
+    </div>
+    <button type="button" onclick="addItem()">+ 항목 추가</button><br><br>
+
     <button type="submit">투표 생성</button>
 </form>
 
 <div id="result"></div>
 
 <script>
+    // 항목 입력창을 동적으로 추가하는 함수
+    function addItem() {
+        const container = document.getElementById("items-container");
+
+        const itemDiv = document.createElement("div");
+        itemDiv.innerHTML = `
+            <input type="text" class="item-text" placeholder="항목 이름" required />
+            <input type="text" class="item-description" placeholder="항목 설명" />
+            <br><br>
+        `;
+
+        container.appendChild(itemDiv);
+    }
+
     // 로그인 시 저장한 토큰 불러오기
     const token = localStorage.getItem("accessToken");
 
@@ -28,6 +49,22 @@
         const title = document.getElementById("title").value;
         const description = document.getElementById("description").value;
         const deadline = document.getElementById("deadline").value;
+
+        const itemTexts = document.querySelectorAll(".item-text");
+        const itemDescriptions = document.querySelectorAll(".item-description");
+        const items = [];
+
+        for (let i = 0; i < itemTexts.length; i++) {
+            const text = itemTexts[i].value.trim();
+            const desc = itemDescriptions[i].value.trim();
+
+            if (text) {
+                items.push({
+                    itemText: text,
+                    description: desc
+                });
+            }
+        }
 
         if (!token) {
             document.getElementById('result').innerText = '⚠️ 로그인 정보가 없습니다. 다시 로그인 해주세요.';
@@ -44,7 +81,8 @@
                 body: JSON.stringify({
                     title,
                     description,
-                    deadline
+                    deadline,
+                    items
                 })
             });
 
