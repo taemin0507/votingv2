@@ -1,53 +1,200 @@
-<!-- create-vote.html -->
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8" />
     <title>투표 생성</title>
+    <style>
+        body {
+            font-family: "Noto Sans KR", sans-serif;
+            background-color: #dbe6f3;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 40px 35px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            max-width: 520px;
+            box-sizing: border-box;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: 700;
+            color: #222;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        input[type="text"],
+        textarea,
+        input[type="datetime-local"] {
+            padding: 12px;
+            font-size: 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        input:focus,
+        textarea:focus {
+            border-color: #a0c4ff;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .deadline-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #444;
+        }
+
+        button {
+            background-color: #88c8a3;
+            color: white;
+            font-size: 16px;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #74b28f;
+        }
+
+        #result {
+            margin-top: 12px;
+            color: #e74c3c;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .vote-item {
+            background-color: #f7f9fb;
+            border: 1px solid #ccddee;
+            padding: 16px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .vote-item .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .vote-item input[type="text"] {
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            width: 88%;
+        }
+
+        .vote-item .remove-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 2px 4px;
+            border-radius: 6px;
+            font-size: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .vote-item .remove-btn:hover {
+            background-color: #c0392b;
+        }
+
+        .add-btn {
+            margin-top: -5px;
+            background-color: #a0c4ff;
+        }
+
+        .add-btn:hover {
+            background-color: #87b3ee;
+        }
+    </style>
 </head>
 <body>
-<h2>투표 생성</h2>
+<div class="container">
+    <h2>투표 생성</h2>
+    <form id="vote-form">
+        <input type="text" id="title" placeholder="투표 제목" required />
+        <textarea id="description" placeholder="투표 설명 (선택)"></textarea>
 
-<form id="vote-form">
-    <input type="text" id="title" placeholder="투표 제목" required /><br /><br />
-    <textarea id="description" placeholder="투표 설명"></textarea><br /><br />
-    <label>마감 기한:</label>
-    <input type="datetime-local" id="deadline" required /><br /><br />
+        <div class="deadline-wrapper">
+            <label for="deadline">마감 기한</label>
+            <input type="datetime-local" id="deadline" required />
+        </div>
 
-    <h3>항목 추가</h3>
-    <div id="items-container">
-        <!-- 항목 입력창들이 들어올 영역 -->
-    </div>
-    <button type="button" onclick="addItem()">+ 항목 추가</button><br><br>
+        <h3>항목 추가</h3>
+        <div id="items-container">
+            <!-- 항목 입력창들이 들어올 영역 -->
+        </div>
+        <button type="button" class="add-btn" onclick="addItem()">+ 항목 추가</button>
 
-    <button type="submit">투표 생성</button>
-</form>
-
-<div id="result"></div>
+        <button type="submit">투표 생성</button>
+    </form>
+    <div id="result"></div>
+</div>
 
 <script>
-    // 항목 입력창을 동적으로 추가하는 함수
     function addItem() {
         const container = document.getElementById("items-container");
 
         const itemDiv = document.createElement("div");
+        itemDiv.classList.add("vote-item");
         itemDiv.innerHTML = `
-            <input type="text" class="item-text" placeholder="항목 이름" required />
-            <input type="text" class="item-description" placeholder="항목 설명" />
-            <br><br>
+            <div class="input-group">
+                <input type="text" class="item-text" placeholder="항목 이름" required />
+                <input type="text" class="item-description" placeholder="항목 설명 (선택)" />
+            </div>
+            <button type="button" class="remove-btn">❌</button>
         `;
+
+        itemDiv.querySelector(".remove-btn").addEventListener("click", () => {
+            container.removeChild(itemDiv);
+        });
 
         container.appendChild(itemDiv);
     }
 
-    // 로그인 시 저장한 토큰 불러오기
     const token = localStorage.getItem("accessToken");
 
     document.getElementById("vote-form").addEventListener("submit", async (e) => {
         e.preventDefault();
 
-        const title = document.getElementById("title").value;
-        const description = document.getElementById("description").value;
+        const title = document.getElementById("title").value.trim();
+        const description = document.getElementById("description").value.trim();
         const deadline = document.getElementById("deadline").value;
 
         const itemTexts = document.querySelectorAll(".item-text");
@@ -88,7 +235,7 @@
 
             if (response.ok) {
                 alert('✅ 투표가 성공적으로 생성되었습니다!');
-                window.location.href = 'vote-list.html';  // 🎯 생성 성공 후 목록 페이지로 이동
+                window.location.href = 'vote-list.html';
             } else {
                 alert('❌ 투표 생성 실패');
             }

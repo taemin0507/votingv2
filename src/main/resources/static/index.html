@@ -3,19 +3,93 @@
 <head>
     <meta charset="UTF-8" />
     <title>로그인</title>
+    <style>
+        body {
+            font-family: "Noto Sans KR", sans-serif;
+            background-color: #dbe6f3;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: white;
+            padding: 40px 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            max-width: 420px;
+            text-align: center;
+        }
+
+        .logo {
+            width: 100px;
+            margin: 0 auto 20px auto;
+        }
+
+        h2 {
+            margin-bottom: 30px;
+            font-weight: 700;
+            color: #222;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 18px;
+            font-size: 15px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+
+        input:focus {
+            border-color: #a0c4ff;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            background-color: #9cd2af;
+            color: white;
+            font-size: 16px;
+            border: none;
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #85bb98;
+        }
+
+        #result {
+            margin-top: 15px;
+            color: #e74c3c;
+            font-size: 14px;
+        }
+    </style>
 </head>
 <body>
-<h2>로그인</h2>
+<div class="container">
+    <!-- 세명대학교 로고 -->
 
-<!-- 로그인 폼 -->
-<form id="login-form">
-    <input type="text" id="username" placeholder="아이디" required />
-    <input type="password" id="password" placeholder="비밀번호" required />
-    <button type="submit">로그인</button>
-</form>
+    <img src="../image/smu.jpg" height="100" width="100"/>
+    <h2>세명대학교 전자투표 시스템</h2>
 
-<!-- 로그인 결과 출력 영역 -->
-<div id="result"></div>
+    <!-- 로그인 폼 -->
+    <form id="login-form">
+        <input type="text" id="username" placeholder="학번" required />
+        <input type="password" id="password" placeholder="비밀번호" required />
+        <button type="submit">로그인</button>
+    </form>
+
+    <div id="result"></div>
+</div>
 
 <!-- 로그인 처리 JS -->
 <script>

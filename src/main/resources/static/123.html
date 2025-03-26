@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <title>투표 상세 보기</title>
+    <style>
+        body {
+            font-family: "Noto Sans KR", sans-serif;
+            background-color: #dbe6f3;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 40px 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            max-width: 500px;
+            box-sizing: border-box;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: 700;
+            color: #222;
+        }
+
+        .info-group {
+            display: flex;
+            flex-direction: column;
+            background-color: #f6f6f6;
+            padding: 14px 16px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .label {
+            font-weight: 600;
+            font-size: 14px;
+            color: #444;
+            margin-bottom: 6px;
+        }
+
+        .value {
+            font-size: 15px;
+            color: #222;
+            word-break: break-word;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 25px;
+            padding: 12px;
+            font-size: 16px;
+            background-color: #9cd2af;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #85bb98;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>투표 상세</h2>
+
+    <div class="info-group">
+        <div class="label">ID</div>
+        <div class="value" id="vote-id"></div>
+    </div>
+
+    <div class="info-group">
+        <div class="label">제목</div>
+        <div class="value" id="vote-title"></div>
+    </div>
+
+    <div class="info-group">
+        <div class="label">설명</div>
+        <div class="value" id="vote-description"></div>
+    </div>
+
+    <div class="info-group">
+        <div class="label">마감일</div>
+        <div class="value" id="vote-deadline"></div>
+    </div>
+
+    <div class="info-group">
+        <div class="label">마감 여부</div>
+        <div class="value" id="vote-closed"></div>
+    </div>
+
+    <button onclick="window.location.href='vote-list.html'">목록으로</button>
+</div>

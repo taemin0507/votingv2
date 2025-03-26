@@ -1,43 +1,169 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-8" />
     <title>투표 상세 보기</title>
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; }
-        .label { font-weight: bold; margin-top: 10px; display: inline-block; width: 100px; }
+        body {
+            font-family: "Noto Sans KR", sans-serif;
+            background-color: #dbe6f3;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 40px 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            max-width: 600px;
+            box-sizing: border-box;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: 700;
+            color: #222;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .info-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .info-box {
+            background-color: #f6f6f6;
+            padding: 14px 16px;
+            border-radius: 10px;
+        }
+
+        .label {
+            font-weight: 600;
+            font-size: 14px;
+            color: #444;
+            margin-bottom: 4px;
+        }
+
+        .value {
+            font-size: 15px;
+            color: #222;
+            word-break: break-word;
+        }
+
+        .vote-item-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .vote-item {
+            background-color: #eef3f9;
+            padding: 10px 14px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .vote-item input[type="radio"] {
+            transform: scale(1.2);
+        }
+
+        .vote-item label {
+            font-size: 15px;
+            color: #333;
+            flex: 1;
+        }
+
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        button {
+            padding: 12px;
+            font-size: 16px;
+            background-color: #9cd2af;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #85bb98;
+        }
+
+        .back-btn {
+            background-color: #ccc;
+        }
+
+        .back-btn:hover {
+            background-color: #aaa;
+        }
     </style>
 </head>
 <body>
-<h2>투표 상세</h2>
+<div class="container">
+    <h2>투표 상세</h2>
 
-<!-- ✅ 투표 기본 정보 출력 -->
-<div>
-    <div><span class="label">ID:</span> <span id="vote-id"></span></div>
-    <div><span class="label">제목:</span> <span id="vote-title"></span></div>
-    <div><span class="label">설명:</span> <span id="vote-description"></span></div>
-    <div><span class="label">마감일:</span> <span id="vote-deadline"></span></div>
-    <div><span class="label">마감 여부:</span> <span id="vote-closed"></span></div>
+    <!-- 🔹 투표 정보 영역 -->
+    <div class="section">
+        <div class="info-group">
+            <div class="info-box">
+                <div class="label">ID</div>
+                <div class="value" id="vote-id"></div>
+            </div>
+            <div class="info-box">
+                <div class="label">제목</div>
+                <div class="value" id="vote-title"></div>
+            </div>
+            <div class="info-box">
+                <div class="label">설명</div>
+                <div class="value" id="vote-description"></div>
+            </div>
+            <div class="info-box">
+                <div class="label">마감일</div>
+                <div class="value" id="vote-deadline"></div>
+            </div>
+            <div class="info-box">
+                <div class="label">마감 여부</div>
+                <div class="value" id="vote-closed"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🔹 항목 선택 영역 -->
+    <form id="vote-form" class="section">
+        <div class="label">투표 항목 선택</div>
+        <div id="vote-items" class="vote-item-list"></div>
+
+        <div class="btn-group">
+            <button type="submit">투표하기</button>
+            <button type="button" class="back-btn" onclick="window.location.href='vote-list.html'">← 목록으로</button>
+        </div>
+    </form>
 </div>
-
-<!-- ✅ 항목 선택 영역 -->
-<h3>항목 선택</h3>
-<form id="vote-form">
-    <div id="vote-items"></div>
-    <br>
-    <button type="submit">투표하기</button>
-</form>
-
-<br><br>
-<!-- ✅ 목록으로 이동 버튼 -->
-<button onclick="window.location.href='vote-list.html'">← 목록으로</button>
 
 <script>
     const params = new URLSearchParams(window.location.search);
     const voteId = params.get("id");
     const token = localStorage.getItem("accessToken");
 
-    // ✅ 상세정보 조회 및 표시
     if (!voteId) {
         alert("잘못된 접근입니다. (투표 ID 없음)");
     } else {
@@ -59,12 +185,11 @@
                 const container = document.getElementById("vote-items");
                 vote.items.forEach(item => {
                     const div = document.createElement("div");
+                    div.className = "vote-item";
                     div.innerHTML = `
-                    <label>
                         <input type="radio" name="selectedItemId" value="${item.itemId}" required />
-                        ${item.itemText} - ${item.itemDescription || "설명 없음"}
-                    </label>
-                `;
+                        <label>${item.itemText} - ${item.itemDescription || "설명 없음"}</label>
+                    `;
                     container.appendChild(div);
                 });
             })
@@ -74,7 +199,6 @@
             });
     }
 
-    // ✅ 투표 제출 요청
     document.getElementById("vote-form").addEventListener("submit", async (e) => {
         e.preventDefault();
         const selected = document.querySelector('input[name="selectedItemId"]:checked');
@@ -90,7 +214,7 @@
                     "Content-Type": "application/json",
                     "Authorization": `Bearer ${token}`
                 },
-                body: JSON.stringify({ selectedItemId: selected.value })  // ✅ 필드명 주의!
+                body: JSON.stringify({ selectedItemId: selected.value })
             });
 
             if (response.ok) {
