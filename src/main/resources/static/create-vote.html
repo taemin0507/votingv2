@@ -152,6 +152,8 @@
         <textarea id="description" placeholder="투표 설명 (선택)"></textarea>
 
         <div class="deadline-wrapper">
+            <label for="startTime">시작 시간</label>
+            <input type="datetime-local" id="startTime" required />
             <label for="deadline">마감 기한</label>
             <input type="datetime-local" id="deadline" required />
         </div>
@@ -196,6 +198,7 @@
         const title = document.getElementById("title").value.trim();
         const description = document.getElementById("description").value.trim();
         const deadline = document.getElementById("deadline").value;
+        const startTime = document.getElementById("startTime").value;
 
         const itemTexts = document.querySelectorAll(".item-text");
         const itemDescriptions = document.querySelectorAll(".item-description");
@@ -228,6 +231,7 @@
                 body: JSON.stringify({
                     title,
                     description,
+                    startTime,
                     deadline,
                     items
                 })

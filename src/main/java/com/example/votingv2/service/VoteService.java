@@ -38,6 +38,7 @@ public class VoteService {
                 .createdBy(admin)
                 .createdAt(LocalDateTime.now())
                 .isClosed(false)
+                .startTime(request.getStartTime())  // 추가
                 .build();
 
         Vote savedVote = voteRepository.save(vote);
@@ -149,12 +150,16 @@ public class VoteService {
     private VoteResponse toResponse(Vote vote) {
         List<VoteItem> items = voteItemRepository.findByVoteId(vote.getId());
 
+        //  현재 시간이 마감일 이후면 true
+        boolean isClosed = LocalDateTime.now().isAfter(vote.getDeadline());
+
         return VoteResponse.builder()
                 .id(vote.getId())
                 .title(vote.getTitle())
                 .description(vote.getDescription())
                 .deadline(vote.getDeadline())
-                .isClosed(vote.isClosed())
+                .isClosed(isClosed) //  여기서 실시간 계산된 값 사용
+                .startTime(vote.getStartTime())  // 추가
                 .createdAt(vote.getCreatedAt())
                 .items(items.stream()
                         .map(item -> VoteResponse.Item.builder()

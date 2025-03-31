@@ -33,6 +33,9 @@ public class Vote {
     @JoinColumn(name = "created_by")
     private User createdBy; // 생성한 관리자 계정
 
+    @Column(name = "start_time", nullable = false)
+    private LocalDateTime startTime;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now(); // 생성 시각
 }

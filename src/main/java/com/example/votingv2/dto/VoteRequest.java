@@ -17,6 +17,8 @@ public class VoteRequest {
     private String description;         // 투표 설명
     private LocalDateTime deadline;     // 마감 기한
     private List<VoteItemRequest> items; // 항목 리스트
+    private LocalDateTime startTime;
+
 
     // ✅ 사용자 투표용 필드 (항목 선택 시 사용)
     @Setter

@@ -15,6 +15,8 @@ public class VoteResponse {
     private LocalDateTime deadline;
     private boolean isClosed;
     private LocalDateTime createdAt;
+    private LocalDateTime startTime;
+
 
     // ✅ 투표 항목 정보를 담는 내부 클래스 리스트
     private List<Item> items;

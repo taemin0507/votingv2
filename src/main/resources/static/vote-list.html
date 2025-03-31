@@ -61,12 +61,13 @@
             text-decoration: underline;
         }
 
-        th:nth-child(1), td:nth-child(1) { width: 8%; }
+        th:nth-child(1), td:nth-child(1) { width: 4%; }
         th:nth-child(2), td:nth-child(2) { width: 20%; }
-        th:nth-child(3), td:nth-child(3) { width: 40%; }
+        th:nth-child(3), td:nth-child(3) { width: 26%; }
         th:nth-child(4), td:nth-child(4) { width: 18%; }
-        th:nth-child(5), td:nth-child(5) { width: 10%; }
-        th:nth-child(6), td:nth-child(6) { width: 14%; }
+        th:nth-child(5), td:nth-child(5) { width: 18%; }
+        th:nth-child(6), td:nth-child(6) { width: 10%; }
+        th:nth-child(7), td:nth-child(7) { width: 14%; }
 
         .action-btn {
             padding: 6px 10px;
@@ -85,6 +86,24 @@
         .delete-btn {
             background-color: #ef3a3a;
             color: white;
+        }
+        .logout-btn {
+            position: fixed;
+            top: 20px;
+            right: 30px;
+            background-color: #f97b7b;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            z-index: 1000;
+            transition: background-color 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background-color: #e15c5c;
         }
 
         button.create-btn {
@@ -106,6 +125,8 @@
     </style>
 </head>
 <body>
+<!-- ✅ 로그아웃 버튼 영역 -->
+<button class="logout-btn" onclick="logout()">로그아웃</button>
 <div class="container">
     <h2>투표 목록</h2>
     <table id="voteTable">
@@ -114,7 +135,8 @@
             <th>ID</th>
             <th>제목</th>
             <th>설명</th>
-            <th>마감일</th>
+            <th>시작시간</th>
+            <th>마감시간</th>
             <th>마감 여부</th>
             <th>관리</th>
         </tr>
@@ -129,6 +151,12 @@
 
 <script>
     const accessToken = localStorage.getItem("accessToken");
+
+    function logout() {
+        localStorage.removeItem("accessToken");
+        alert("로그아웃 되었습니다.");
+        window.location.href = "index.html"; // ✅ 로그인 페이지로 이동
+    }
 
     function loadVotes() {
         fetch("http://localhost:8080/api/votes", {
@@ -147,17 +175,25 @@
 
                 data.forEach(vote => {
                     const row = document.createElement("tr");
+                    const now = new Date();
+                    const start = new Date(vote.startTime); // 시작 시간 객체로 변환
+                    const isStarted = now >= start;
+
+                    const titleCell = vote.closed
+                        ? `<span style="color: gray; cursor: default;">${vote.title}</span>`
+                        : `<a href="vote-detail.html?id=${vote.id}">${vote.title}</a>`;
                     row.innerHTML = `
-                    <td>${vote.id}</td>
-                    <td><a href="vote-detail.html?id=${vote.id}">${vote.title}</a></td>
-                    <td>${vote.description}</td>
-                    <td>${vote.deadline.replace("T", " ").substring(0, 16)}</td>
-                    <td>${vote.closed ? "마감됨" : "진행 중"}</td>
+                        <td>${vote.id}</td>
+                        <td>${titleCell}</td>
+                        <td>${vote.description}</td>
+                        <td>${vote.deadline.replace("T", " ").substring(0, 16)}</td>
+                        <td>${vote.startTime.replace("T", " ").substring(0, 16)}</td>
+                        <td>${vote.closed ? "마감됨" : isStarted ? "진행 중" : "시작 전"}</td>
                     <td>
                         <button class="action-btn result-btn" onclick="location.href='vote-result.html?id=${vote.id}'">결과 보기</button>
                         <button class="action-btn delete-btn" onclick="deleteVote(${vote.id})">삭제</button>
                     </td>
-                `;
+    `;
                     tbody.appendChild(row);
                 });
             })
