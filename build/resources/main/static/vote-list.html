@@ -6,7 +6,7 @@
     <style>
         body {
             font-family: "Noto Sans KR", sans-serif;
-            background-color: #dbe6f3;
+            background-color: #b0c7e6;
             margin: 0;
             display: flex;
             justify-content: center;
@@ -18,7 +18,7 @@
             background-color: #fff;
             padding: 30px;
             border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
             max-width: 1000px;
             width: 100%;
             box-sizing: border-box;
@@ -49,7 +49,7 @@
             text-align: center;
             margin-bottom: 25px;
             font-weight: 700;
-            color: #222;
+            color: #111;
         }
 
         table {
@@ -59,18 +59,21 @@
             margin-bottom: 25px;
         }
 
+        th {
+            background-color: #e0e7ff;
+            font-weight: 600;
+        }
+
         th, td {
-            border: 1px solid #ccc;
+            border: 1px solid #999;
             padding: 12px;
             font-size: 15px;
             text-align: center;
             word-wrap: break-word;
         }
 
-        th {
-            background-color: #f0f4f8;
-            font-weight: 600;
-            color: #333;
+        td {
+            height: 64px;
         }
 
         .action-btn {
@@ -93,14 +96,28 @@
         }
 
         .vote-btn {
-            background-color: #4caf50; /* 친환경 초록색 */
+            background-color: #2a8c55;
             color: white;
         }
 
+        .vote-btn:hover {
+            background-color: #246c44;
+        }
+
+        .toggle-public {
+            background-color: #d4d4d4; /* 회색: 비공개 전환 */
+            color: #333;
+            font-weight: 600;
+        }
+
+        .toggle-private {
+            background-color: #facc15; /* 노란색: 공개 전환 */
+            color: #333;
+            font-weight: 600;
+        }
+
         .create-btn {
-            display: block;
-            margin: 0 auto;
-            background-color: #9cd2af;
+            background-color: #2a8c55;
             color: white;
             font-size: 16px;
             border: none;
@@ -111,7 +128,7 @@
         }
 
         .create-btn:hover {
-            background-color: #85bb98;
+            background-color: #246c44;
         }
 
         .section-title {
@@ -119,6 +136,13 @@
             font-size: 16px;
             margin: 60px 0 10px;
             color: #222;
+        }
+
+        .button-row {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -131,13 +155,13 @@
     <table id="voteTable">
         <thead>
         <tr>
-            <th>ID</th>
-            <th>제목</th>
-            <th>설명</th>
-            <th>시작시간</th>
-            <th>마감시간</th>
-            <th>마감 여부</th>
-            <th></th>
+            <th style="width: 5%;">ID</th>
+            <th style="width: 15%;">제목</th>
+            <th style="width: 35%;">설명</th>
+            <th style="width: 15%;">시작시간</th>
+            <th style="width: 15%;">마감시간</th>
+            <th style="width: 10%;">진행 여부</th>
+            <th style="width: 15%;">작업</th>
         </tr>
         </thead>
         <tbody></tbody>
@@ -147,19 +171,22 @@
     <table id="endedVoteTable">
         <thead>
         <tr>
-            <th>ID</th>
-            <th>제목</th>
-            <th>설명</th>
-            <th>시작시간</th>
-            <th>마감시간</th>
-            <th>마감 여부</th>
-            <th></th>
+            <th style="width: 5%;">ID</th>
+            <th style="width: 15%;">제목</th>
+            <th style="width: 35%;">설명</th>
+            <th style="width: 15%;">시작시간</th>
+            <th style="width: 15%;">마감시간</th>
+            <th style="width: 10%;">진행 여부</th>
+            <th style="width: 15%;">작업</th>
         </tr>
         </thead>
         <tbody></tbody>
     </table>
 
-    <button class="create-btn" onclick="location.href='create-vote.html'">+ 새 투표 생성</button>
+    <div class="button-row">
+        <button class="create-btn admin-only" onclick="location.href='create-vote.html'">+ 새 투표 생성</button>
+        <button class="create-btn admin-only" onclick="location.href='trash-vote-list.html'">🗑️ 휴지통으로 이동</button>
+    </div>
 </div>
 
 <script>
@@ -187,6 +214,12 @@
                 tbody.innerHTML = "";
                 endedBody.innerHTML = "";
 
+                data.sort((a, b) => (a.public === b.public ? 0 : a.public ? 1 : -1));
+
+                if (role !== "ADMIN") {
+                    data = data.filter(vote => vote.public);
+                }
+
                 data.forEach(vote => {
                     const now = new Date();
                     const start = new Date(vote.startTime);
@@ -200,7 +233,7 @@
                 });
 
                 if (role !== "ADMIN") {
-                    document.querySelector(".create-btn").style.display = "none";
+                    document.querySelectorAll(".admin-only").forEach(el => el.style.display = "none");
                 }
             })
             .catch(error => {
@@ -211,84 +244,124 @@
 
     function renderOpenVote(vote, isStarted) {
         const tbody = document.querySelector("#voteTable tbody");
+        const toggleClass = vote.public ? "toggle-public" : "toggle-private";
+        const toggleLabel = vote.public ? "비공개로 전환" : "공개로 전환";
 
         const row = document.createElement("tr");
-        const titleCell =
-            role === "ADMIN"
-                ? `<a href="vote-detail.html?id=${vote.id}">${vote.title}</a>`
-                : `<span>${vote.title}</span>`;
+        const titleCell = role === "ADMIN"
+            ? `<a href="vote-detail.html?id=${vote.id}">${vote.title}</a>`
+            : `<span>${vote.title}</span>`;
 
         let controlButtons = "";
         if (role === "ADMIN") {
             controlButtons = `
-        <button class="action-btn result-btn" onclick="location.href='vote-result.html?id=${vote.id}'">결과 보기</button>
-        <button class="action-btn delete-btn" onclick="deleteVote(${vote.id})">삭제</button>
-      `;
+                <button class="action-btn ${toggleClass}" onclick="togglePublic(${vote.id}, this)">${toggleLabel}</button>
+                <button class="action-btn delete-btn" onclick="moveToTrash(${vote.id})">휴지통으로</button>
+            `;
         } else {
             controlButtons = `
-        <button class="action-btn vote-btn" onclick="location.href='vote-detail.html?id=${vote.id}'">투표하기</button>
-      `;
+                <button class="action-btn vote-btn" onclick="${isStarted ? `location.href='vote-detail.html?id=${vote.id}'` : `alert('투표 시작 전 입니다.')`}">투표하기</button>
+            `;
         }
 
         row.innerHTML = `
-      <td>${vote.id}</td>
-      <td>${titleCell}</td>
-      <td>${vote.description}</td>
-      <td>${vote.startTime.replace("T", " ").substring(0, 16)}</td>
-      <td>${vote.deadline.replace("T", " ").substring(0, 16)}</td>
-      <td>${vote.closed ? "마감됨" : isStarted ? "진행 중" : "시작 전"}</td>
-      <td>${controlButtons}</td>
-    `;
+            <td>${vote.id}</td>
+            <td>${titleCell}</td>
+            <td>${vote.description}</td>
+            <td>${vote.startTime.replace("T", " ").substring(0, 16)}</td>
+            <td>${vote.deadline.replace("T", " ").substring(0, 16)}</td>
+            <td>${vote.closed ? "마감" : isStarted ? "진행 중" : "시작 전"}</td>
+            <td>${controlButtons}</td>
+        `;
 
         tbody.appendChild(row);
     }
 
     function renderClosedVote(vote) {
         const endedBody = document.querySelector("#endedVoteTable tbody");
+        const toggleClass = vote.public ? "toggle-public" : "toggle-private";
+        const toggleLabel = vote.public ? "비공개로 전환" : "공개로 전환";
 
         const row = document.createElement("tr");
 
-        const controlButtons = `
-      <button class="action-btn result-btn" onclick="location.href='vote-result.html?id=${vote.id}'">결과 보기</button>
-    `;
+        let controlButtons = "";
+        if (role === "ADMIN") {
+            controlButtons = `
+                <button class="action-btn ${toggleClass}" onclick="togglePublic(${vote.id}, this)">${toggleLabel}</button>
+                <button class="action-btn result-btn" onclick="location.href='vote-result.html?id=${vote.id}'">결과 보기</button>
+                <button class="action-btn delete-btn" onclick="moveToTrash(${vote.id})">휴지통으로</button>
+            `;
+        } else {
+            controlButtons = `
+                <button class="action-btn result-btn" onclick="location.href='vote-result.html?id=${vote.id}'">결과 보기</button>
+            `;
+        }
 
         row.innerHTML = `
-      <td>${vote.id}</td>
-      <td>${vote.title}</td>
-      <td>${vote.description || '설명이 없습니다.'}</td>
-      <td>${vote.startTime.replace("T", " ").substring(0, 16)}</td>
-      <td>${vote.deadline.replace("T", " ").substring(0, 16)}</td>
-      <td>마감됨</td>
-      <td>${controlButtons}</td>
-    `;
+            <td>${vote.id}</td>
+            <td>${vote.title}</td>
+            <td>${vote.description || '설명이 없습니다.'}</td>
+            <td>${vote.startTime.replace("T", " ").substring(0, 16)}</td>
+            <td>${vote.deadline.replace("T", " ").substring(0, 16)}</td>
+            <td>마감</td>
+            <td>${controlButtons}</td>
+        `;
 
         endedBody.appendChild(row);
     }
 
-    function deleteVote(voteId) {
-        if (!confirm("이 투표를 삭제하시겠습니까?")) return;
-
-        fetch(`http://localhost:8080/api/votes/${voteId}`, {
-            method: "DELETE",
+    function togglePublic(voteId, btn) {
+        fetch(`http://localhost:8080/api/votes/${voteId}/toggle-public`, {
+            method: "PATCH",
             headers: {
                 "Authorization": "Bearer " + accessToken
             }
         })
-            .then(response => {
-                if (response.ok) {
-                    alert("삭제 완료!");
-                    loadVotes();
+            .then(res => {
+                if (!res.ok) throw new Error("전환 실패");
+                return res.text();
+            })
+            .then(() => {
+                const isCurrentlyPublic = btn.classList.contains("toggle-public");
+
+                if (isCurrentlyPublic) {
+                    // 비공개 → 공개
+                    btn.innerText = "공개로 전환";
+                    btn.classList.remove("toggle-public");
+                    btn.classList.add("toggle-private");
                 } else {
-                    alert("삭제 실패");
+                    // 공개 → 비공개
+                    btn.innerText = "비공개로 전환";
+                    btn.classList.remove("toggle-private");
+                    btn.classList.add("toggle-public");
                 }
             })
-            .catch(error => {
-                console.error("삭제 오류:", error);
-                alert("⚠️ 서버 오류 발생");
+            .catch(err => {
+                alert("⚠️ 공개 상태 전환 실패: " + err.message);
+            });
+    }
+
+    function moveToTrash(voteId) {
+        if (!confirm("이 투표를 휴지통으로 이동하시겠습니까?")) return;
+
+        fetch(`http://localhost:8080/api/votes/${voteId}/trash`, {
+            method: "PATCH",
+            headers: {
+                "Authorization": "Bearer " + accessToken
+            }
+        })
+            .then(res => {
+                if (!res.ok) throw new Error("이동 실패");
+                alert("휴지통으로 이동되었습니다.");
+                loadVotes();
+            })
+            .catch(err => {
+                alert("⚠️ 이동 실패: " + err.message);
             });
     }
 
     loadVotes();
 </script>
+
 </body>
 </html>

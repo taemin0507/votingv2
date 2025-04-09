@@ -30,5 +30,7 @@ public class VoteRequest {
     public static class VoteItemRequest {
         private String itemText;        // 항목 이름
         private String description;     // 항목 설명
+        private String image;
+        private String promise;
     }
 }

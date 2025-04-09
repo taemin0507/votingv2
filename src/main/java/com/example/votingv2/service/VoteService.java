@@ -36,8 +36,10 @@ public class VoteService {
                 .description(request.getDescription())
                 .deadline(request.getDeadline())
                 .createdBy(admin)
+                .isPublic(false)
+                .isDeleted(false)
                 .createdAt(LocalDateTime.now())
-                .isClosed(false)
+
                 .startTime(request.getStartTime())  // 추가
                 .build();
 
@@ -49,6 +51,10 @@ public class VoteService {
                             .vote(savedVote)
                             .itemText(itemReq.getItemText())
                             .description(itemReq.getDescription())
+                            .promise(itemReq.getPromise())
+                            .image(itemReq.getImage() != null && !itemReq.getImage().startsWith("data:")
+                                    ? "data:image/png;base64," + itemReq.getImage()
+                                    : itemReq.getImage())
                             .build())
                     .toList();
             voteItemRepository.saveAll(items);
@@ -99,13 +105,17 @@ public class VoteService {
                 .title(vote.getTitle())
                 .description(vote.getDescription())
                 .deadline(vote.getDeadline())
-                .isClosed(vote.isClosed())
+               
                 .createdAt(vote.getCreatedAt())
                 .items(items.stream()
                         .map(item -> VoteResponse.Item.builder()
                                 .itemId(item.getId())
                                 .itemText(item.getItemText())
-                                .itemDescription(item.getDescription())
+                                .description(item.getDescription())
+                                .promise(item.getPromise())
+                                .image(item.getImage() != null && !item.getImage().startsWith("data:")
+                                    ? "data:image/png;base64," + item.getImage()
+                                    :item.getImage())
                                 .build())
                         .toList())
                 .build();
@@ -116,32 +126,48 @@ public class VoteService {
      */
     public List<VoteResponse> getAllVotes() {
         return voteRepository.findAll().stream()
+                .filter(vote -> !vote.isDeleted())
                 .map(this::toResponse)
                 .collect(Collectors.toList());
     }
 
-    /**
-     * 특정 투표 삭제 (항목과 결과까지 함께 삭제)
-     */
     @Transactional
-    public void deleteVote(Long voteId) {
+    public void moveToTrash(Long voteId) {
         Vote vote = voteRepository.findById(voteId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 투표가 존재하지 않습니다."));
+        vote.setDeleted(true);
+        voteRepository.save(vote);
+    }
 
-        // ✅ 1. 해당 투표의 항목 리스트 가져오기
+    @Transactional
+    public void restoreFromTrash(Long voteId) {
+        Vote vote = voteRepository.findByIdAndIsDeletedTrue(voteId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 삭제된 투표가 존재하지 않습니다."));
+        vote.setDeleted(false);
+        voteRepository.save(vote);
+    }
+
+    @Transactional
+    public void hardDeleteVote(Long voteId) {
+        Vote vote = voteRepository.findById(voteId)
+                .orElseThrow(() -> new IllegalArgumentException("투표 없음"));
+
+        // 투표 결과 및 항목도 함께 삭제
         List<VoteItem> voteItems = voteItemRepository.findByVoteId(voteId);
-
-        // ✅ 2. 각 항목에 대한 투표 결과 삭제
         for (VoteItem item : voteItems) {
             voteResultRepository.deleteAll(voteResultRepository.findByVoteItemId(item.getId()));
         }
-
-        // ✅ 3. 항목 삭제
         voteItemRepository.deleteAll(voteItems);
-
-        // ✅ 4. 마지막으로 투표 자체 삭제
         voteRepository.delete(vote);
     }
+
+    public List<VoteResponse> getDeletedVotes() {
+        return voteRepository.findAllByIsDeletedTrue()
+                .stream()
+                .map(this::toResponse)
+                .collect(Collectors.toList());
+    }
+
 
 
     /**
@@ -161,11 +187,17 @@ public class VoteService {
                 .isClosed(isClosed) //  여기서 실시간 계산된 값 사용
                 .startTime(vote.getStartTime())  // 추가
                 .createdAt(vote.getCreatedAt())
+                .isPublic(vote.isPublic())
+                .isDeleted(vote.isDeleted())
                 .items(items.stream()
                         .map(item -> VoteResponse.Item.builder()
                                 .itemId(item.getId())
                                 .itemText(item.getItemText())
-                                .itemDescription(item.getDescription())
+                                .description(item.getDescription())
+                                .promise(item.getPromise())
+                                .image(item.getImage() != null && !item.getImage().startsWith("data:")
+                                        ? "data:image/png;base64," + item.getImage()
+                                        :item.getImage())
                                 .build())
                         .toList())
                 .build();
@@ -173,5 +205,13 @@ public class VoteService {
     public int countVotesByItem(Long voteId, Long itemId) {
         return voteResultRepository.countByVoteIdAndVoteItemId(voteId, itemId);
     }
+
+    @Transactional
+    public void togglePublicStatus(Long voteId) {   // 공개여부 서비스
+        Vote vote = voteRepository.findById(voteId)
+                .orElseThrow(() -> new IllegalArgumentException("투표 없음"));
+        vote.setPublic(!vote.isPublic());
+    }
+
 
 }

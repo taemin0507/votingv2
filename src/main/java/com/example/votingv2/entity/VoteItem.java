@@ -26,4 +26,11 @@ public class VoteItem {
 
     @Column(columnDefinition = "TEXT")
     private String description; // 항목 설명
+
+    @Column(name = "image", columnDefinition = "LONGTEXT")
+    private String image;
+
+    @Column(columnDefinition = "TEXT")
+    private String promise;
+
 }

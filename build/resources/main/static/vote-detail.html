@@ -6,7 +6,7 @@
     <style>
         body {
             font-family: "Noto Sans KR", sans-serif;
-            background-color: #dbe6f3;
+            background-color: #b0c7e6;
             margin: 0;
             display: flex;
             justify-content: center;
@@ -19,7 +19,7 @@
             background-color: #fff;
             padding: 40px 30px;
             border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
             width: 100%;
             max-width: 600px;
             box-sizing: border-box;
@@ -29,19 +29,19 @@
             text-align: center;
             margin-bottom: 10px;
             font-weight: 700;
-            color: #222;
+            color: #111;
         }
 
         .vote-warning {
             font-size: 13px;
-            color: #777;
+            color: #444;
             text-align: center;
             margin-bottom: 10px;
         }
 
         .divider {
             border: none;
-            border-top: 1px solid #ccc;
+            border-top: 1px solid #bbb;
             margin: 0 0 20px 0;
         }
 
@@ -55,16 +55,16 @@
             background-color: #fff;
             padding: 16px;
             border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
             display: flex;
             align-items: center;
             gap: 16px;
         }
 
         .vote-image {
-            width: 60px;
-            height: 80px;
-            background-color: #eee;
+            width: 120px;
+            height: 160px;
+            background-color: #ccc;
             border-radius: 6px;
             object-fit: cover;
             flex-shrink: 0;
@@ -85,10 +85,10 @@
 
         .vote-info .desc {
             font-size: 14px;
-            color: #555;
+            color: #444;
             line-height: 1.4;
             margin-top: 4px;
-            word-break: break-word; /* ✅ 박스 넘김 방지 */
+            word-break: break-word;
         }
 
         .vote-right {
@@ -99,12 +99,12 @@
         }
 
         .promise-btn {
-            background: #f0f4f9;
-            border: 1px solid #c2d4e8;
+            background: #e0e9f5;
+            border: 1px solid #7aa0d8;
             border-radius: 6px;
             font-size: 13px;
             padding: 4px 10px;
-            color: #2a5db0;
+            color: #1e458f;
             cursor: pointer;
             white-space: nowrap;
         }
@@ -124,7 +124,7 @@
         button {
             padding: 12px;
             font-size: 16px;
-            background-color: #9cd2af;
+            background-color: #2a8c55;
             color: white;
             border: none;
             border-radius: 10px;
@@ -133,22 +133,86 @@
         }
 
         button:hover {
-            background-color: #85bb98;
+            background-color: #246c44;
         }
 
         .back-btn {
-            background-color: #ccc;
+            background-color: #999;
         }
 
         .back-btn:hover {
-            background-color: #aaa;
+            background-color: #777;
+        }
+
+        /* 공약 팝업 스타일 */
+        #promise-modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.4);
+            z-index: 999;
+        }
+
+        #promise-modal .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 400px;
+            height: 500px;              /* ✅ 고정 높이 설정 */
+            overflow-y: auto;           /* ✅ 내용이 넘치면 세로 스크롤 */
+            overflow-x: hidden;         /* ✅ 가로 스크롤 방지 */
+            margin: 80px auto;          /* ✅ 화면 위/아래로 여백 확보 */
+            padding: 20px;
+            border-radius: 10px;
+            position: relative;
+            box-sizing: border-box;
+        }
+
+        #promise-modal img {
+            width: 180px;
+            height: 240px;
+            object-fit: cover;
+            border-radius: 8px;
+            background: #ccc;
+            margin: 0 auto 10px;
+            display: block;
+        }
+
+        #promise-text {
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 14px;
+            line-height: 1.4;
+            width: 47ch;
+            margin: 0 auto 10px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            box-sizing: border-box;
+        }
+
+        #promise-modal .modal-footer {
+            margin-top: 10px;
+            text-align: right;
+        }
+
+        #promise-modal .modal-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        #promise-modal .modal-content::-webkit-scrollbar-thumb {
+            background: #bbb;
+            border-radius: 6px;
+        }
+
+        #promise-modal .modal-content::-webkit-scrollbar-track {
+            background: #eee;
         }
     </style>
 </head>
 <body>
 <div class="container">
     <h2 id="page-header">투표 상세</h2>
-    <p class="vote-warning">※한번만 투표 할 수 있으며 수정 불가 합니다.</p>
+    <p class="vote-warning">※한 번만 투표할 수 있으며 수정은 불가능합니다.</p>
     <hr class="divider" />
 
     <form id="vote-form">
@@ -162,10 +226,29 @@
     </form>
 </div>
 
+<!-- 공약 보기 모달 -->
+<div id="promise-modal">
+    <div class="modal-content">
+        <h3>공약</h3>
+        <img id="promise-preview" src="" alt="후보 이미지" />
+        <div id="promise-text"></div>
+        <div class="modal-footer">
+            <button id="close-promise">닫기</button>
+        </div>
+    </div>
+</div>
+
 <script>
     const params = new URLSearchParams(window.location.search);
     const voteId = params.get("id");
     const token = localStorage.getItem("accessToken");
+
+    const fallbackImage = 'data:image/svg+xml;base64,' + btoa(`
+        <svg width="120" height="160" xmlns="http://www.w3.org/2000/svg">
+            <rect width="120" height="160" fill="#eee"/>
+            <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="#777" font-size="12">No Image</text>
+        </svg>
+    `);
 
     if (!voteId) {
         alert("잘못된 접근입니다. (투표 ID 없음)");
@@ -184,18 +267,26 @@
 
                 const container = document.getElementById("vote-items");
                 vote.items.forEach((item) => {
+                    const imageSrc = item.image
+                        ? (item.image.startsWith("data:") ? item.image : `data:image/png;base64,${item.image}`)
+                        : fallbackImage;
+
+                    const promise = item.promise || "";
+                    const description = item.description || "";
+
                     const div = document.createElement("div");
                     div.className = "vote-item";
                     div.innerHTML = `
-                        <img src="${item.imageUrl || 'https://via.placeholder.com/60x80?text=No+Image'}" class="vote-image" alt="이미지" />
+                        <img src="${imageSrc}" class="vote-image" alt="이미지" />
                         <div class="vote-info">
-                            <div class="title">&lt;${item.itemText || "제목 없음"}&gt;</div>
-                            <div class="desc">${item.itemDescription || " "}</div>
+                            <div class="title">[${item.itemText || "제목 없음"}]</div>
+                            <div class="desc">${description}</div>
                         </div>
                         <div class="vote-right">
                             <button type="button" class="promise-btn">공약 ＋</button>
                             <input type="radio" name="selectedItemId" value="${item.itemId}" required />
                         </div>
+                        <div class="promise" style="display: none;">${promise}</div>
                     `;
                     container.appendChild(div);
                 });
@@ -214,6 +305,12 @@
             return;
         }
 
+        // 선택된 후보자 제목(이름) 가져오기
+        const selectedTitle = selected.closest(".vote-item").querySelector(".title")?.innerText || "선택한 후보자";
+        // 확인 팝업
+        const confirmed = confirm(`${selectedTitle}\n이 후보자에게 투표하시겠습니까?`);
+        if (!confirmed) return;
+
         try {
             const response = await fetch(`http://localhost:8080/api/votes/${voteId}/vote`, {
                 method: "POST",
@@ -228,12 +325,28 @@
                 alert("✅ 투표가 완료되었습니다!");
                 window.location.href = "vote-list.html";
             } else {
-                alert("❌ 투표 실패");
+                alert("❌ 이미 참여한 투표입니다!");
             }
         } catch (error) {
             console.error("투표 중 오류:", error);
             alert("⚠️ 네트워크 오류");
         }
+    });
+
+    document.addEventListener("click", function (e) {
+        if (e.target.classList.contains("promise-btn")) {
+            const voteItem = e.target.closest(".vote-item");
+            const imageEl = voteItem.querySelector(".vote-image");
+            const promiseEl = voteItem.querySelector(".promise");
+
+            document.getElementById("promise-preview").src = imageEl?.src || fallbackImage;
+            document.getElementById("promise-text").innerText = promiseEl?.innerText || "";
+            document.getElementById("promise-modal").style.display = "block";
+        }
+    });
+
+    document.getElementById("close-promise").addEventListener("click", function () {
+        document.getElementById("promise-modal").style.display = "none";
     });
 </script>
 </body>

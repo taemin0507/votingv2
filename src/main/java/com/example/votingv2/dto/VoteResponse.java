@@ -16,6 +16,8 @@ public class VoteResponse {
     private boolean isClosed;
     private LocalDateTime createdAt;
     private LocalDateTime startTime;
+    private boolean isPublic;
+    private boolean isDeleted;
 
 
     // ✅ 투표 항목 정보를 담는 내부 클래스 리스트
@@ -26,6 +28,8 @@ public class VoteResponse {
     public static class Item {
         private Long itemId;
         private String itemText;
-        private String itemDescription;
+        private String description;
+        private String image;
+        private String promise;
     }
 }

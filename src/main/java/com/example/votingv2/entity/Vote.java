@@ -27,15 +27,23 @@ public class Vote {
 
     private LocalDateTime deadline; // 마감일
 
-    private boolean isClosed = false; // 마감 여부
+
 
     @ManyToOne
     @JoinColumn(name = "created_by")
     private User createdBy; // 생성한 관리자 계정
 
     @Column(name = "start_time", nullable = false)
-    private LocalDateTime startTime;
+    private LocalDateTime startTime;        // 시작시간
 
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now(); // 생성 시각
+
+    @Column(name = "is_public")
+    private boolean isPublic;   // 공개여부
+
+    @Column(nullable = false, name = "is_deleted")
+    private boolean isDeleted;
+
+
 }

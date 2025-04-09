@@ -5,6 +5,7 @@ import com.example.votingv2.dto.VoteResponse;
 import com.example.votingv2.service.VoteService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -52,15 +53,45 @@ public class VoteController {
         return ResponseEntity.ok("투표가 성공적으로 제출되었습니다.");
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteVote(@PathVariable Long id) {
-        voteService.deleteVote(id);
-        return ResponseEntity.noContent().build(); // 204 응답
+    // 삭제된 투표 목록 조회
+    @GetMapping("/deleted")
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<VoteResponse> getDeletedVotes() {
+        return voteService.getDeletedVotes();
     }
+
+    @PatchMapping("/{id}/trash")
+    public ResponseEntity<String> moveToTrash(@PathVariable Long id) {
+        voteService.moveToTrash(id);
+        return ResponseEntity.ok("휴지통으로 이동되었습니다.");
+    }
+
+    @DeleteMapping("/{id}/force")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<Void> hardDelete(@PathVariable Long id) {
+        voteService.hardDeleteVote(id);
+        return ResponseEntity.ok().build();
+    }
+
 
     @GetMapping("/{voteId}/items/{itemId}/count")
     public int getVoteItemCount(@PathVariable Long voteId,
                                 @PathVariable Long itemId) {
         return voteService.countVotesByItem(voteId, itemId);
     }
+
+    @PatchMapping("/{voteId}/toggle-public")  // 공개여부 api
+    public void togglePublic(@PathVariable Long voteId) {
+        voteService.togglePublicStatus(voteId);
+    }
+
+    @PatchMapping("/{id}/restore")
+    public ResponseEntity<String> restoreVote(@PathVariable Long id) {
+        voteService.restoreFromTrash(id);
+        return ResponseEntity.ok("복원 완료");
+    }
+
+
+
+
 }

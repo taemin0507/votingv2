@@ -6,7 +6,7 @@
     <style>
         body {
             font-family: "Noto Sans KR", sans-serif;
-            background-color: #dbe6f3;
+            background-color: #b0c7e6; /* 진한 하늘색 배경 */
             margin: 0;
             display: flex;
             justify-content: center;
@@ -18,7 +18,7 @@
             background-color: white;
             padding: 40px 30px;
             border-radius: 15px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
             width: 100%;
             max-width: 420px;
             text-align: center;
@@ -32,7 +32,7 @@
         h2 {
             margin-bottom: 30px;
             font-weight: 700;
-            color: #222;
+            color: #111;
         }
 
         input[type="text"],
@@ -41,19 +41,20 @@
             padding: 12px;
             margin-bottom: 18px;
             font-size: 15px;
-            border: 1px solid #ccc;
+            border: 1px solid #bbb;
             border-radius: 8px;
             box-sizing: border-box;
+            transition: border-color 0.3s ease;
         }
 
         input:focus {
-            border-color: #a0c4ff;
+            border-color: #4878d4; /* 진한 파란색 테두리 */
             outline: none;
         }
 
         button {
             width: 100%;
-            background-color: #9cd2af;
+            background-color: #2a8c55; /* 진한 초록색 */
             color: white;
             font-size: 16px;
             border: none;
@@ -64,7 +65,7 @@
         }
 
         button:hover {
-            background-color: #85bb98;
+            background-color: #246c44; /* 더 진한 초록 */
         }
 
         #result {
@@ -77,8 +78,7 @@
 <body>
 <div class="container">
     <!-- 세명대학교 로고 -->
-
-    <img src="../image/smu.jpg" height="100" width="100"/>
+    <img src="../image/smu.jpg" height="100" width="100" alt="세명대 로고" />
     <h2>세명대학교 전자투표 시스템</h2>
 
     <!-- 로그인 폼 -->
@@ -91,15 +91,13 @@
     <div id="result"></div>
 </div>
 
-<!-- 로그인 처리 JS -->
 <script>
     document.getElementById("login-form").addEventListener("submit", function (e) {
-        e.preventDefault(); // 기본 폼 제출 막기
+        e.preventDefault();
 
         const username = document.getElementById("username").value;
         const password = document.getElementById("password").value;
 
-        // 로그인 요청 보내기
         fetch("http://localhost:8080/api/auth/login", {
             method: "POST",
             headers: {
@@ -108,18 +106,13 @@
             body: JSON.stringify({ username, password })
         })
             .then(response => {
-                if (!response.ok) {
-                    throw new Error("로그인 실패");
-                }
+                if (!response.ok) throw new Error("로그인 실패");
                 return response.json();
             })
             .then(data => {
-                // 로그인 성공: 토큰, 유저 정보 저장
                 localStorage.setItem("accessToken", data.accessToken);
                 localStorage.setItem("username", data.username);
                 localStorage.setItem("role", data.role);
-
-                // ✅ vote-list.html로 이동
                 window.location.href = "vote-list.html";
             })
             .catch(error => {

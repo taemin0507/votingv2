@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <title>삭제된 투표 목록</title>
+    <style>
+        body {
+            font-family: "Noto Sans KR", sans-serif;
+            background-color: #b0c7e6;
+            padding: 40px 20px;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 1000px;
+            box-sizing: border-box;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            font-weight: 700;
+            color: #111;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: fixed;
+            margin-bottom: 25px;
+        }
+
+        th {
+            background-color: #e0e7ff;
+            font-weight: 600;
+        }
+
+        th, td {
+            border: 1px solid #999;
+            padding: 12px;
+            font-size: 15px;
+            text-align: center;
+            word-wrap: break-word;
+        }
+
+        td {
+            height: 64px;
+        }
+
+        .action-btn {
+            padding: 6px 10px;
+            font-size: 13px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 2px;
+        }
+
+        .delete-btn {
+            background-color: #ef3a3a;
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background-color: #cc2f2f;
+        }
+
+        .restore-btn {
+            background-color: #2a8c55;
+            color: white;
+        }
+
+        .restore-btn:hover {
+            background-color: #246c44;
+        }
+
+        .back-btn {
+            background-color: #2a8c55;
+            color: white;
+            font-size: 16px;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-bottom: 20px;
+        }
+
+        .back-btn:hover {
+            background-color: #246c44;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>삭제된 투표 목록</h2>
+
+    <button class="back-btn" onclick="location.href='vote-list.html'">🗳️ 투표 목록으로 돌아가기</button>
+
+    <table id="deletedTable">
+        <thead>
+        <tr>
+            <th style="width: 10%;">ID</th>
+            <th style="width: 25%;">제목</th>
+            <th style="width: 45%;">설명</th>
+            <th style="width: 20%;">작업</th>
+        </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<script>
+    const accessToken = localStorage.getItem("accessToken");
+
+    function loadDeletedVotes() {
+        fetch("http://localhost:8080/api/votes/deleted", {
+            method: "GET",
+            headers: {
+                "Authorization": "Bearer " + accessToken
+            }
+        })
+            .then(res => res.json())
+            .then(data => {
+                const tbody = document.querySelector("#deletedTable tbody");
+                tbody.innerHTML = "";
+                data.forEach(vote => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${vote.id}</td>
+                        <td>${vote.title}</td>
+                        <td>${vote.description || "설명 없음"}</td>
+                        <td>
+                            <button class="action-btn delete-btn" onclick="deletePermanently(${vote.id})">완전 삭제</button>
+                            <button class="action-btn restore-btn" onclick="restoreVote(${vote.id})">복원</button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            })
+            .catch(err => {
+                alert("삭제된 투표 목록을 불러오는 데 실패했습니다.");
+                console.error(err);
+            });
+    }
+
+    function deletePermanently(id) {
+        if (!confirm("정말 이 투표를 완전 삭제하시겠습니까? 복구할 수 없습니다.")) return;
+
+        fetch(`http://localhost:8080/api/votes/${id}/permanent`, {
+            method: "DELETE",
+            headers: {
+                "Authorization": "Bearer " + accessToken
+            }
+        })
+            .then(res => {
+                if (res.ok) {
+                    alert("완전 삭제 완료!");
+                    loadDeletedVotes();
+                } else {
+                    alert("삭제 실패");
+                }
+            })
+            .catch(err => {
+                alert("⚠️ 서버 오류");
+                console.error(err);
+            });
+    }
+
+    function restoreVote(id) {
+        if (!confirm("이 투표를 복원하시겠습니까?")) return;
+
+        fetch(`http://localhost:8080/api/votes/${id}/restore`, {
+            method: "PATCH",
+            headers: {
+                "Authorization": "Bearer " + accessToken
+            }
+        })
+            .then(res => {
+                if (res.ok) {
+                    alert("복원 완료!");
+                    loadDeletedVotes();
+                } else {
+                    alert("복원 실패");
+                }
+            })
+            .catch(err => {
+                alert("⚠️ 서버 오류");
+                console.error(err);
+            });
+    }
+
+    // 초기 로딩
+    loadDeletedVotes();
+</script>
+</body>
+</html>
