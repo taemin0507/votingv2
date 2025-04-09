@@ -79,14 +79,17 @@
         .action-btn {
             padding: 6px 10px;
             font-size: 13px;
+            font-weight: 500;
             border: none;
-            border-radius: 5px;
+            border-radius: 6px;
             cursor: pointer;
             margin: 2px;
+            min-width: 90px; /* ✅ 버튼 크기 통일용 최소 너비 */
+            text-align: center;
         }
 
         .result-btn {
-            background-color: #3a88ef;
+            background-color: #1f3fae;
             color: white;
         }
 
@@ -105,19 +108,17 @@
         }
 
         .toggle-public {
-            background-color: #d4d4d4; /* 회색: 비공개 전환 */
+            background-color: #d4d4d4;
             color: #333;
-            font-weight: 600;
         }
 
         .toggle-private {
-            background-color: #facc15; /* 노란색: 공개 전환 */
-            color: #333;
-            font-weight: 600;
+            background-color: #2a8c55;
+            color: white;
         }
 
         .create-btn {
-            background-color: #2a8c55;
+            background-color: #a8d5ba;
             color: white;
             font-size: 16px;
             border: none;
@@ -185,7 +186,7 @@
 
     <div class="button-row">
         <button class="create-btn admin-only" onclick="location.href='create-vote.html'">+ 새 투표 생성</button>
-        <button class="create-btn admin-only" onclick="location.href='trash-vote-list.html'">🗑️ 휴지통으로 이동</button>
+        <button class="create-btn admin-only" onclick="location.href='trash-vote-list.html'">🗑️휴지통</button>
     </div>
 </div>
 
@@ -256,7 +257,7 @@
         if (role === "ADMIN") {
             controlButtons = `
                 <button class="action-btn ${toggleClass}" onclick="togglePublic(${vote.id}, this)">${toggleLabel}</button>
-                <button class="action-btn delete-btn" onclick="moveToTrash(${vote.id})">휴지통으로</button>
+                <button class="action-btn delete-btn" onclick="moveToTrash(${vote.id})">휴지통</button>
             `;
         } else {
             controlButtons = `
@@ -289,7 +290,7 @@
             controlButtons = `
                 <button class="action-btn ${toggleClass}" onclick="togglePublic(${vote.id}, this)">${toggleLabel}</button>
                 <button class="action-btn result-btn" onclick="location.href='vote-result.html?id=${vote.id}'">결과 보기</button>
-                <button class="action-btn delete-btn" onclick="moveToTrash(${vote.id})">휴지통으로</button>
+                <button class="action-btn delete-btn" onclick="moveToTrash(${vote.id})">휴지통</button>
             `;
         } else {
             controlButtons = `
