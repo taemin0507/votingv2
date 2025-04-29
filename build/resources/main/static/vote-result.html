@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <title>투표 결과</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
@@ -80,7 +81,9 @@
 
     canvas {
       display: block;
-      max-width: 300px;
+      width: 100% !important;
+      height: auto !important;
+      max-width: 80%;
       margin: 30px auto 0;
     }
 
@@ -89,7 +92,7 @@
       margin-top: 40px;
       padding: 12px;
       font-size: 16px;
-      background-color: #2a8c55;
+      background-color: green;
       color: white;
       border: none;
       border-radius: 10px;
@@ -99,6 +102,13 @@
 
     button:hover {
       background-color: #246c44;
+    }
+
+    @media (max-width: 600px) {
+      .candidate {
+        width: 100%;
+        max-width: 280px;
+      }
     }
   </style>
 </head>
@@ -116,11 +126,10 @@
     <div class="candidate-list" id="candidate-list"></div>
   </div>
 
-  <canvas id="voteChart" height="220"></canvas>
+  <canvas id="voteChart"></canvas>
 
   <button onclick="location.href='vote-list.html'">← 목록으로</button>
 </div>
-
 <script>
   const params = new URLSearchParams(location.search);
   const voteId = params.get("id");
