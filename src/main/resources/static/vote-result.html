@@ -92,7 +92,7 @@
       margin-top: 40px;
       padding: 12px;
       font-size: 16px;
-      background-color: green;
+      background-color: cornflowerblue;
       color: white;
       border: none;
       border-radius: 10px;
@@ -101,13 +101,13 @@
     }
 
     button:hover {
-      background-color: #246c44;
+      background-color: dodgerblue;
     }
 
-    @media (max-width: 600px) {
+    @media (max-width: 400px) {
       .candidate {
-        width: 100%;
-        max-width: 280px;
+        flex: 0 0 calc(50% - 8px); /* 모바일에서만 2개 */
+        max-width: calc(50% - 8px);
       }
     }
   </style>

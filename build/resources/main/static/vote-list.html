@@ -84,18 +84,22 @@
             color: white;
         }
 
+        .result-btn:hover {
+            background-color: dodgerblue;
+        }
+
         .delete-btn {
             background-color: red;
             color: white;
         }
 
         .vote-btn {
-            background-color: green;
+            background-color: cornflowerblue;
             color: white;
         }
 
         .vote-btn:hover {
-            background-color: green;
+            background-color: dodgerblue;
         }
 
         .toggle-public {
@@ -104,12 +108,12 @@
         }
 
         .toggle-private {
-            background-color: green;
+            background-color: slateblue;
             color: white;
         }
 
         .create-btn {
-            background-color: green;
+            background-color: cornflowerblue;
             color: white;
             font-size: 16px;
             border: none;
@@ -120,8 +124,24 @@
         }
 
         .create-btn:hover {
-            background-color: #246c44;
+            background-color: dodgerblue;
         }
+        .trash-btn {
+            background-color: red;
+            color: white;
+            font-size: 16px;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+
+        }
+
+        .trash-btn:hover {
+            background-color: orangered;
+        }
+
 
         .section-title {
             font-weight: 600;
@@ -185,7 +205,7 @@
                 border-radius: 8px;
                 border: none;
                 color: white;
-                background-color: green;
+                background-color: cornflowerblue;
                 cursor: pointer;
             }
 
@@ -196,6 +216,7 @@
             .vote-card button.delete-btn {
                 background-color: red;
             }
+
         }
     </style>
 </head>
@@ -243,7 +264,7 @@
 
     <div class="button-row">
         <button class="create-btn admin-only" onclick="location.href='create-vote.html'">+ 새 투표 생성</button>
-        <button class="create-btn admin-only" onclick="location.href='trash-vote-list.html'">🗑️휴지통</button>
+        <button class="trash-btn admin-only" onclick="location.href='trash-vote-list.html'">🗑️ 휴지통</button>
     </div>
 </div>
 
