@@ -8,19 +8,29 @@
 </head>
 <body>
 <div class="container">
-    <button class="logout-btn" onclick="logout()">로그아웃</button>
 
-    <h2>투표 목록</h2>
+    <!-- 사용자 바 -->
+    <div class="user-bar">
+        <a href="https://www.semyung.ac.kr" target="_blank">
+            <img src="image/smulogo.jpg" class="logo" alt="세명대 이름" />
+        </a>
+        <div class="right-section">
+            <div class="user-info" id="userInfo"></div>
+            <button class="logout-btn" onclick="logout()">로그아웃</button>
+        </div>
+    </div>
+
+
 
     <div class="section-title">진행중인 투표</div>
     <table id="voteTable">
         <thead>
         <tr>
             <th style="width: 5%;">ID</th>
-            <th style="width: 15%;">제목</th>
+            <th style="width: 19%;">제목</th>
             <th style="width: 35%;">설명</th>
-            <th style="width: 15%;">시작시간</th>
-            <th style="width: 15%;">마감시간</th>
+            <th style="width: 13%;">시작시간</th>
+            <th style="width: 13%;">마감시간</th>
             <th style="width: 10%;">진행 여부</th>
             <th style="width: 15%;">작업</th>
         </tr>
@@ -35,10 +45,10 @@
         <thead>
         <tr>
             <th style="width: 5%;">ID</th>
-            <th style="width: 15%;">제목</th>
+            <th style="width: 19%;">제목</th>
             <th style="width: 35%;">설명</th>
-            <th style="width: 15%;">시작시간</th>
-            <th style="width: 15%;">마감시간</th>
+            <th style="width: 13%;">시작시간</th>
+            <th style="width: 13%;">마감시간</th>
             <th style="width: 10%;">진행 여부</th>
             <th style="width: 15%;">작업</th>
         </tr>

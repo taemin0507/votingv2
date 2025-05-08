@@ -5,6 +5,8 @@ import com.example.votingv2.dto.VoteResponse;
 import com.example.votingv2.entity.*;
 import com.example.votingv2.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,19 +30,22 @@ public class VoteService {
      * 투표 생성 처리
      */
     public VoteResponse createVote(VoteRequest request) {
-        User admin = userRepository.findByUsername("admin1")
-                .orElseThrow(() -> new IllegalArgumentException("관리자 계정이 존재하지 않습니다."));
+        // 현재 로그인한 사용자 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUsername = authentication.getName();
+
+        User user = userRepository.findByUsername(currentUsername)
+                .orElseThrow(() -> new IllegalArgumentException("로그인한 유저가 존재하지 않습니다."));
 
         Vote vote = Vote.builder()
                 .title(request.getTitle())
                 .description(request.getDescription())
                 .deadline(request.getDeadline())
-                .createdBy(admin)
+                .createdBy(user) // 여기! 현재 로그인한 사람을 넣는다
                 .isPublic(false)
                 .isDeleted(false)
                 .createdAt(LocalDateTime.now())
-
-                .startTime(request.getStartTime())  // 추가
+                .startTime(request.getStartTime())
                 .build();
 
         Vote savedVote = voteRepository.save(vote);
@@ -62,6 +67,7 @@ public class VoteService {
 
         return toResponse(savedVote);
     }
+
 
     /**
      * 사용자 투표 제출 처리

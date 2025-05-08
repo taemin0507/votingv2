@@ -55,7 +55,7 @@ public class VoteController {
 
     // 삭제된 투표 목록 조회
     @GetMapping("/deleted")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEVELOP')")
     public List<VoteResponse> getDeletedVotes() {
         return voteService.getDeletedVotes();
     }
@@ -67,7 +67,7 @@ public class VoteController {
     }
 
     @DeleteMapping("/{id}/force")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'DEVELOP')")
     public ResponseEntity<Void> hardDelete(@PathVariable Long id) {
         voteService.hardDeleteVote(id);
         return ResponseEntity.ok().build();

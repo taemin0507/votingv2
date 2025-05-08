@@ -11,5 +11,5 @@ import lombok.Getter;
 public class LoginResponse {
     private String accessToken;  // 발급된 JWT 토큰
     private String username;     // 로그인한 사용자 ID
-    private String role;         // 사용자 권한 (USER, ADMIN)
+    private String role;         // 사용자 권한 (USER, ADMIN,de)
 }

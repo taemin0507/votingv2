@@ -27,5 +27,5 @@ public class User {
     private String password; // 암호화된 비밀번호
 
     @Column(nullable = false)
-    private String role; // USER, ADMIN
+    private String role; // USER, ADMIN, develop
 }
