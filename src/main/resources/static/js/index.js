@@ -4,7 +4,7 @@ document.getElementById("login-form").addEventListener("submit", function (e) {
     const username = document.getElementById("username").value;
     const password = document.getElementById("password").value;
 
-    fetch("http://localhost:8080/api/auth/login", {
+    fetch("https://votingv2-backend.up.railway.app/api/auth/login", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
