@@ -309,3 +309,8 @@ input[type="radio"]::before {
 input[type="radio"]:checked::before {
     opacity: 1;
 }
+@media (max-width: 600px) {
+    #close-promise {
+        right: 20px;
+    }
+}

@@ -224,6 +224,11 @@ button:hover {
     background-color: red;
     color: white;
 }
+.delete-btn:hover {
+    background-color: orangered;
+    color: white;
+}
+
 .vote-btn {
     background-color: cornflowerblue;
     color: white;

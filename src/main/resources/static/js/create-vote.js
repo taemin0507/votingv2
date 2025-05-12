@@ -62,7 +62,9 @@ document.addEventListener("click", function (e) {
 document.getElementById("save-promise").addEventListener("click", function () {
     const text = document.getElementById("promise-textarea").value.trim();
     if (currentPromiseTarget) {
-        const textarea = currentPromiseTarget.closest(".description-wrapper").querySelector(".item-description");
+        const textarea = currentPromiseTarget
+            .closest(".vote-info")
+            .querySelector(".item-description"); // ✅ 수정됨
         textarea.dataset.promise = text;
         currentPromiseTarget.textContent = text ? "공약 ✔" : "공약 ＋";
     }

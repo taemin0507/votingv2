@@ -3,6 +3,9 @@ const accessToken = localStorage.getItem("accessToken");
 const role = localStorage.getItem("role");
 
 function logout() {
+    const confirmLogout = confirm("로그아웃 하시겠습니까?");
+    if (!confirmLogout) return;
+
     localStorage.removeItem("accessToken");
     localStorage.removeItem("role");
     alert("로그아웃 되었습니다.");
@@ -243,18 +246,10 @@ loadVotes();
 
 document.addEventListener("DOMContentLoaded", () => {
     const username = localStorage.getItem("username");
-    const role = localStorage.getItem("role");
-
-    const roleTextMap = {
-        "USER": "사용자",
-        "ADMIN": "관리자",
-        "DEVELOP": "개발자"
-    };
-
-    if (username && role) {
+    if (username) {
         const userInfoDiv = document.getElementById("userInfo");
-        const roleName = roleTextMap[role.toUpperCase()] || role;
-        userInfoDiv.textContent = `${username}(${roleName})`;
+        userInfoDiv.textContent = username;
     }
 });
+
 

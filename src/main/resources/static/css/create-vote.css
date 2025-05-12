@@ -11,7 +11,7 @@ body {
 }
 .container {
     background-color: #fff;
-    padding: 40px 35px;
+    padding: 40px 35px 0 35px;
     border-radius: 15px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     width: 100%;
@@ -325,4 +325,26 @@ button[type="submit"]:hover {
     padding: 10px 16px;
     font-size: 14px;
     white-space: nowrap;
+}
+.back-button-wrapper {
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.back-button {
+    padding: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    background-color: #999;
+    color: white; /* 어두운 텍스트 */
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    width: 100%;
+    box-sizing: border-box;
+}
+.back-button:hover {
+    background-color: #777;
+    transform: scale(1.03);
 }

@@ -139,6 +139,10 @@ document.addEventListener("click", e => {
         document.getElementById("promise-preview").src = img;
         document.getElementById("promise-text").innerText = promiseText;
         document.getElementById("promise-modal").style.display = "block";
+        const modalContent = document.querySelector("#promise-modal .modal-content");
+        if (modalContent) {
+            modalContent.scrollTop = 0;
+        }
     }
 });
 
