@@ -150,3 +150,4 @@ document.addEventListener("click", e => {
 document.getElementById("close-promise").addEventListener("click", () => {
     document.getElementById("promise-modal").style.display = "none";
 });
+const totalVotes = voteData.datasets[0].data.reduce((a, b) => a + b, 0);

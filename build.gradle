@@ -28,7 +28,8 @@ dependencies {
 
 
     // JWT (토큰 인증)
-    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'                             // JWT API
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jdbc'// JWT API
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'                               // 구현체
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'                            // JSON 변환 (jackson 기반)
 
@@ -39,6 +40,8 @@ dependencies {
     // 테스트 라이브러리
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     runtimeOnly 'com.mysql:mysql-connector-j'// JUnit 등 포함
+    runtimeOnly 'com.mysql:mysql-connector-j:8.2.0' // ✅ 최신 버전 기준
+
 }
 
 tasks.named('test') {

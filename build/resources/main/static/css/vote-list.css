@@ -171,6 +171,7 @@ button:hover {
     margin-top: 20px;
 }
 .create-btn, .trash-btn {
+    display: none;
     background-color: cornflowerblue;
     color: white;
     font-size: 16px;
@@ -191,6 +192,7 @@ button:hover {
 }
 
 .action-btn {
+    display: none;
     padding: 6px 10px;
     font-size: 13px;
     font-weight: 500;
@@ -292,18 +294,21 @@ button:hover {
     .vote-card .actions {
         margin-top: 12px;
         display: flex;
+        flex-direction: column;
         gap: 8px;
-        flex-wrap: wrap;
+        width: 100%; /* ✅ 추가 */
     }
     .vote-card button {
-        flex: 1;
-        padding: 10px;
-        font-size: 14px;
+        width: 100%;
+        padding: 12px;
+        font-size: 15px;
         border-radius: 8px;
         border: none;
         color: white;
         background-color: cornflowerblue;
         cursor: pointer;
+        box-sizing: border-box;
+        text-align: center;
     }
     .vote-card button.result-btn {
         background-color: cornflowerblue;

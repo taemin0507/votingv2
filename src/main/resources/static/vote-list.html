@@ -37,7 +37,6 @@
         </thead>
         <tbody></tbody>
     </table>
-
     <div class="card-list" id="voteCards"></div>
 
     <div class="section-title">마감된 투표</div>
@@ -55,6 +54,9 @@
         </thead>
         <tbody></tbody>
     </table>
+    <div id="loading" style="text-align:center; margin:20px; font-weight:bold;">
+        ⏳ 투표 목록을 불러오는 중입니다...
+    </div>
 
     <div class="card-list" id="endedVoteCards"></div>
 
@@ -62,6 +64,7 @@
         <button class="create-btn admin-only" onclick="location.href='create-vote.html'">+ 새 투표 생성</button>
         <button class="trash-btn admin-only" onclick="location.href='trash-vote-list.html'">🗑️ 휴지통</button>
     </div>
+
 </div>
 
 <script src="js/vote-list.js"></script>

@@ -37,3 +37,4 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
         document.getElementById('result').innerText = '⚠️ 로그인 요청 실패';
     }
 });
+
