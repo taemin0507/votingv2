@@ -4,11 +4,11 @@ const role = localStorage.getItem("role");
 function logout() {
     const confirmLogout = confirm("로그아웃 하시겠습니까?");
     if (!confirmLogout) return;
-
+    window.location.href = "index.html";
     localStorage.removeItem("accessToken");
     localStorage.removeItem("role");
-    alert("로그아웃 되었습니다.");
-    window.location.href = "index.html";
+
+
 }
 
 function loadVotes() {
